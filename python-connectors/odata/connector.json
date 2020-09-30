@@ -1,0 +1,84 @@
+{
+    "meta": {
+        "label": "OData",
+        "description": "Import data from an OData service",
+        "icon": "icon-list"
+    },
+    "readable": true,
+    "writable": false,
+    "params": [
+        {
+            "label": "Authentication",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "auth_type",
+            "label": "Type of authentication",
+            "type": "SELECT",
+            "selectChoices": [
+                {
+                    "value": "login",
+                    "label": "User name / password"
+                },
+                {
+                    "value": "oauth",
+                    "label": "Single Sign On"
+                }
+            ]
+        },
+        {
+            "name": "sap-odata_oauth",
+            "label": "Azure preset",
+            "type": "PRESET",
+            "parameterSetId": "oauth",
+            "visibilityCondition": "model.auth_type == 'oauth'"
+        },
+        {
+            "name": "sap-odata_login",
+            "label": "OData preset",
+            "type": "PRESET",
+            "parameterSetId": "login",
+            "visibilityCondition": "model.auth_type == 'login'"
+        },
+        {
+            "label": "Data to retrieve",
+            "type": "SEPARATOR"
+        },
+        {
+            "name": "odata_service_node",
+            "label": "Service node",
+            "description": "",
+            "type": "STRING",
+            "defaultValue": "",
+            "mandatory": false
+        },
+        {
+            "name": "odata_list_title",
+            "label": "Entity",
+            "description": "",
+            "type": "STRING",
+            "defaultValue": "",
+            "mandatory": false
+        },
+        {
+            "name": "show_advanced_parameters",
+            "label": "Show advanced parameters",
+            "description": "",
+            "type": "BOOLEAN",
+            "defaultValue": false
+        },
+        {
+            "label": "Advanced parameters",
+            "type": "SEPARATOR",
+            "visibilityCondition": "model.show_advanced_parameters == true"
+        },
+        {
+            "name": "bulk_size",
+            "label": "Bulk size",
+            "description": "",
+            "type": "INT",
+            "defaultValue": 10000,
+            "visibilityCondition": "model.show_advanced_parameters == true"
+        }
+    ]
+}

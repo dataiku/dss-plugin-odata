@@ -1,0 +1,60 @@
+{
+    "meta": {
+        "label": "OData login",
+        "description": "",
+        "icon": "icon-list"
+    },
+    "defaultDefinableInline": true,
+    "defaultDefinableAtProjectLevel": true,
+    "pluginParams": [],
+    "params": [
+        {
+            "name": "odata_instance",
+            "label": "Resource",
+            "type": "STRING",
+            "description": "URL to the .svc resource, e.g. https://services.odata.org/V3/OData/OData.svc/",
+            "mandatory": true
+        },
+        {
+            "name": "ignore_ssl_check",
+            "label": "Ignore SSL check",
+            "type": "BOOLEAN",
+            "description": "",
+            "defaultValue": false
+        },
+        {
+            "name": "odata_version",
+            "label": "OData protocol version",
+            "type": "SELECT",
+            "defaultValue" : "v4",
+            "selectChoices": [
+                {
+                    "value": "v2",
+                    "label": "Version 2"
+                },
+                {
+                    "value": "v3",
+                    "label": "Version 3"
+                },
+                {
+                    "value": "v4",
+                    "label": "Version 4"
+                }
+            ]
+        },
+        {
+            "name": "odata_username",
+            "label": "Username",
+            "type": "STRING",
+            "description": "",
+            "mandatory": false
+        },
+        {
+            "name": "odata_password",
+            "label": "Password",
+            "type": "PASSWORD",
+            "description": "",
+            "mandatory": false
+        }
+    ]
+}
