@@ -15,7 +15,7 @@ class ODataClient():
     MAX_RETRIES = 3
 
     def __init__(self, config):
-        self.auth_type = config.get(DSSConstants.AUTH_TYPE)
+        self.auth_type = config.get(DSSConstants.AUTH_TYPE, "login")
         login = config.get('sap-odata_{}'.format(self.auth_type))
         self.odata_service_node = config.get(ODataConstants.SERVICE_NODE).strip("/")
         if self.odata_service_node != "":

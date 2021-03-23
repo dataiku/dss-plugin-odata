@@ -15,6 +15,8 @@
             "name": "auth_type",
             "label": "Type of authentication",
             "type": "SELECT",
+            "visibilityCondition": false,
+            "defaultValue": "login",
             "selectChoices": [
                 {
                     "value": "login",
@@ -25,13 +27,6 @@
                     "label": "Single Sign On"
                 }
             ]
-        },
-        {
-            "name": "sap-odata_oauth",
-            "label": "Azure preset",
-            "type": "PRESET",
-            "parameterSetId": "oauth",
-            "visibilityCondition": "model.auth_type == 'oauth'"
         },
         {
             "name": "sap-odata_login",
