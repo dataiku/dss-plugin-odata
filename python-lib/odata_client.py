@@ -78,17 +78,18 @@ class ODataClient():
             )
         return session
 
-    def get_entity_collections(self, entity, top=None, skip=None):
+    def get_entity_collections(self, entity, top=None, skip=None, page_url=None):
         if self.odata_list_title is None or self.odata_list_title == "":
             top = None  # OData will complain if $top is present in a request to list entities
         query_options = self.get_base_query_options(top=top, skip=skip)
-        url = self.odata_instance + '/' + entity.strip("/") + self.get_query_string(query_options)
+        url = page_url if page_url else self.odata_instance + '/' + entity.strip("/") + self.get_query_string(query_options)
         data = None
         while self._should_retry(data):
             response = self.get(url)
             self.assert_response(response)
             data = response.json()
-        return self.format(data[self.data_container])
+        next_page_url = data.get(ODataConstants.NEXT_LINK, None)
+        return self.format(data.get(self.data_container, {})), next_page_url
 
     def get_entity_metadata(self, entity):
         url = self.odata_instance + "/$metadata"

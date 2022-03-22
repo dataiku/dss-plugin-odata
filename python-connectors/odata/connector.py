@@ -24,7 +24,7 @@ class ODataConnector(Connector):
         """
         Connector.__init__(self, config, plugin_config)
         self.odata_list_title = self.config.get("odata_list_title")
-        self.bulk_size = config.get("bulk_size", 10000)
+        self.bulk_size = config.get("bulk_size", 1000)
         self.client = ODataClient(config)
         # According to https://www.odata.org/documentation/odata-version-2-0/uri-conventions/
         # https://services.odata.org/OData/OData.svc/Category(1)/Products?$top=2&$orderby=name
@@ -65,7 +65,7 @@ class ODataConnector(Connector):
         bulk_size = self.bulk_size
         if records_limit > 0:
             bulk_size = records_limit if records_limit < bulk_size else bulk_size
-        items = self.client.get_entity_collections(self.odata_list_title, top=bulk_size, skip=skip)
+        items, next_page_url = self.client.get_entity_collections(self.odata_list_title, top=bulk_size, skip=skip)
         while items:
             for item in items:
                 yield self.clean(item)
@@ -75,7 +75,7 @@ class ODataConnector(Connector):
                     break
                 if skip + bulk_size > records_limit:
                     bulk_size = records_limit - skip
-            items = self.client.get_entity_collections(self.odata_list_title, top=bulk_size, skip=skip)
+            items, next_page_url = self.client.get_entity_collections(self.odata_list_title, top=bulk_size, skip=skip, page_url=next_page_url)
 
     def clean(self, item):
         for key in self.KEYS_TO_REMOVE:
