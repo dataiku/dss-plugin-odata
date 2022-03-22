@@ -1,9 +1,10 @@
 # Changelog
 
-## [Version 1.0.1](https://github.com/dataiku/dss-plugin-odata/releases/tag/v1.0.1) - Feature release - 2022-03-22
+## [Version 1.0.1](https://github.com/dataiku/dss-plugin-odata/releases/tag/v1.0.1) - Feature and fix release - 2022-03-22
 
 - Add v4 compatibility
 - Add v4 paging
+- Fix processing of JSON columns
 
 ## [Version 1.0.0](https://github.com/dataiku/dss-plugin-odata/releases/tag/v1.0.0) - Initial release - 2021-03-24
 
