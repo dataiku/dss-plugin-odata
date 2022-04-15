@@ -25,6 +25,7 @@ class ODataClient():
         self.ignore_ssl_check = login.get("ignore_ssl_check", False)
         self.odata_list_title = config.get(ODataConstants.LIST_TITLE)
         odata_version = login[ODataConstants.VERSION]
+        self.next_page_key = None
         self.set_odata_protocol_version(odata_version)
 
         if "sap-odata_oauth" in config and ODataConstants.OAUTH in config["sap-odata_oauth"]:
@@ -39,6 +40,8 @@ class ODataClient():
             self.force_json = False
             self.json_in_query_string = False
             self.data_container = ODataConstants.DATA_CONTAINER_V4
+            self.next_page_key = ODataConstants.NEXT_LINK_V4
+            self.is_next_page_an_url = True
         if odata_version == ODataConstants.ODATA_VSAP:
             self.force_json = True
             self.json_in_query_string = True
@@ -47,10 +50,15 @@ class ODataClient():
             self.force_json = True
             self.json_in_query_string = True
             self.data_container = ODataConstants.DATA_CONTAINER_V3
+            self.next_page_key = ODataConstants.NEXT_LINK_V3
+            self.is_next_page_an_url = False
         if odata_version == ODataConstants.ODATA_V2:
             self.force_json = True
             self.json_in_query_string = False
             self.data_container = ODataConstants.DATA_CONTAINER_V2
+
+    def is_paginated(self):
+        return self.next_page_key is not None
 
     def get_session(self, config, odata_version):
         session = requests.Session()
@@ -81,6 +89,9 @@ class ODataClient():
     def get_entity_collections(self, entity, top=None, skip=None, page_url=None):
         if self.odata_list_title is None or self.odata_list_title == "":
             top = None  # OData will complain if $top is present in a request to list entities
+        if self.next_page_key:
+            top = None
+            skip = None
         query_options = self.get_base_query_options(top=top, skip=skip)
         url = page_url if page_url else self.odata_instance + '/' + entity.strip("/") + self.get_query_string(query_options)
         data = None
@@ -88,8 +99,19 @@ class ODataClient():
             response = self.get(url)
             self.assert_response(response)
             data = response.json()
-        next_page_url = data.get(ODataConstants.NEXT_LINK, None)
+        next_page_url = self.extract_next_page_url(data)
         return self.format(data.get(self.data_container, {})), next_page_url
+
+    def extract_next_page_url(self, data):
+        next_page_token = data.get(self.next_page_key, None)
+        if next_page_token is None:
+            return None
+        if self.is_next_page_an_url:
+            logging.info("Next page url={}".format(next_page_token))
+            return next_page_token
+        else:
+            logging.info("Next page token={}, base url={}".format(next_page_token, self.odata_instance))
+            return "/".join([self.odata_instance, next_page_token])
 
     def get_entity_metadata(self, entity):
         url = self.odata_instance + "/$metadata"
