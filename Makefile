@@ -51,7 +51,7 @@ integration-tests:
 	)
 	@echo "[SUCCESS] Running integration tests: Done!"
 
-tests: unit-tests integration-tests
+tests: integration-tests
 
 dist-clean:
 	rm -rf dist
