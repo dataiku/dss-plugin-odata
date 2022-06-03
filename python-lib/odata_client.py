@@ -92,11 +92,11 @@ class ODataClient():
         if self.next_page_key:
             top = None
             skip = None
-        query_options = self.get_base_query_options(top=top, skip=skip)
-        url = page_url if page_url else self.odata_instance + '/' + entity.strip("/") + self.get_query_string(query_options)
+        requests_params = self.get_requests_params(top=top, skip=skip)
+        url = page_url if page_url else self.odata_instance + '/' + entity.strip("/")
         data = None
         while self._should_retry(data):
-            response = self.get(url)
+            response = self.get(url, params=requests_params)
             self.assert_response(response)
             data = response.json()
         next_page_url = self.extract_next_page_url(data)
@@ -138,11 +138,13 @@ class ODataClient():
                 raise DataikuException("Remote service error")
         return False
 
-    def get(self, url, headers={}):
+    def get(self, url, headers={}, params=None):
         headers = self.get_headers()
         args = {
             "headers": headers
         }
+        if params:
+            args["params"] = params
         if self.ignore_ssl_check is True:
             args["verify"] = False
         try:
@@ -158,20 +160,17 @@ class ODataClient():
         headers["Authorization"] = self.get_authorization_bearer()
         return headers
 
-    def get_base_query_options(self, top=None, skip=None, records_limit=None):
+    def get_requests_params(self, top=None, skip=None, records_limit=None):
+        params = {}
         if self.force_json and self.json_in_query_string:
-            query_options = [DSSConstants.JSON_FORMAT]
-        else:
-            query_options = []
+            params[ODataConstants.FORMAT] = ODataConstants.JSON
         if records_limit is not None and int(records_limit) > 0:
-            query_options.append(
-                ODataConstants.RECORD_LIMIT.format(records_limit)
-            )
+            params[ODataConstants.RECORD_LIMIT] = records_limit
         if skip:
-            query_options.append(ODataConstants.SKIP.format(skip))
+            params[ODataConstants.SKIP] = skip
         if top:
-            query_options.append(ODataConstants.TOP.format(top))
-        return query_options
+            params[ODataConstants.TOP] = top
+        return params
 
     def format(self, item):
         if ODataConstants.ENTITYSETS in item:
