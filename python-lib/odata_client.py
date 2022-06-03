@@ -194,12 +194,6 @@ class ODataClient():
         else:
             return None
 
-    def get_query_string(self, query_options):
-        if isinstance(query_options, list) and len(query_options) > 0:
-            return "?" + "&".join(query_options)
-        else:
-            return ""
-
     def assert_response(self, response):
         status_code = response.status_code
         if status_code == 404:
