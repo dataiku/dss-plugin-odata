@@ -1,6 +1,6 @@
 {
     "id": "odata",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "meta": {
         "label": "OData",
         "description": "Import data from your OData services",
