@@ -70,7 +70,7 @@
         {
             "name": "bulk_size",
             "label": "Bulk size",
-            "description": "",
+            "description": "(OData v2 only)",
             "type": "INT",
             "defaultValue": 1000,
             "visibilityCondition": "model.show_advanced_parameters == true"

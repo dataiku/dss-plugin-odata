@@ -26,6 +26,7 @@ class ODataConnector(Connector):
         self.odata_list_title = self.config.get("odata_list_title")
         self.bulk_size = config.get("bulk_size", 1000)
         self.client = ODataClient(config)
+        self.is_paginated = self.client.is_paginated()
         # According to https://www.odata.org/documentation/odata-version-2-0/uri-conventions/
         # https://services.odata.org/OData/OData.svc/Category(1)/Products?$top=2&$orderby=name
         # <-      service root URI                -><- resource path  -><- query options   ->
@@ -67,9 +68,12 @@ class ODataConnector(Connector):
             bulk_size = records_limit if records_limit < bulk_size else bulk_size
         items, next_page_url = self.client.get_entity_collections(self.odata_list_title, top=bulk_size, skip=skip)
         while items:
+            number_of_items = len(items)
             for item in items:
                 yield self.clean(item)
-            skip = skip + bulk_size
+            if self.is_paginated and (not next_page_url):
+                break
+            skip = skip + number_of_items
             if records_limit > 0:
                 if skip >= records_limit:
                     break
