@@ -1,6 +1,8 @@
 try:
+    #  Python 3.X
     from urllib.parse import urlparse, parse_qs, urlunsplit
 except:
+    #  Python 2.X
     from urlparse import urlparse, parse_qs, urlunsplit
 
 
