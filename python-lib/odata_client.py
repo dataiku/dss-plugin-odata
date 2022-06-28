@@ -1,9 +1,12 @@
 import requests
 import logging
+import json
 from odata_constants import ODataConstants
 from dss_constants import DSSConstants
 from dataikuapi.utils import DataikuException
 from time import sleep
+from odata_plugin_common import split_params_from_url
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO,
@@ -17,11 +20,13 @@ class ODataClient():
     def __init__(self, config):
         self.auth_type = config.get(DSSConstants.AUTH_TYPE, "login")
         login = config.get('sap-odata_{}'.format(self.auth_type))
+        url = login.get(ODataConstants.INSTANCE)
+        self.initial_params, instance_url = split_params_from_url(url)
         self.odata_service_node = config.get(ODataConstants.SERVICE_NODE).strip("/")
         if self.odata_service_node != "":
-            self.odata_instance = "/".join([login[ODataConstants.INSTANCE].strip("/"), self.odata_service_node])
+            self.odata_instance = "/".join([instance_url.strip("/"), self.odata_service_node])
         else:
-            self.odata_instance = login[ODataConstants.INSTANCE].strip("/")
+            self.odata_instance = instance_url.strip("/")
         self.ignore_ssl_check = login.get("ignore_ssl_check", False)
         self.odata_list_title = config.get(ODataConstants.LIST_TITLE)
         odata_version = login[ODataConstants.VERSION]
@@ -108,6 +113,7 @@ class ODataClient():
             return None
         if self.is_next_page_an_url:
             logging.info("Next page url={}".format(next_page_token))
+            self.initial_params = None  # The initial query strings are relayed in the next page url
             return next_page_token
         else:
             logging.info("Next page token={}, base url={}".format(next_page_token, self.odata_instance))
@@ -143,8 +149,12 @@ class ODataClient():
         args = {
             "headers": headers
         }
-        if params:
-            args["params"] = params
+        updated_params = params or {}
+
+        if self.initial_params:
+            updated_params.update(self.initial_params)
+        if updated_params:
+            args["params"] = updated_params
         if self.ignore_ssl_check is True:
             args["verify"] = False
         try:

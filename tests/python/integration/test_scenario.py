@@ -13,3 +13,7 @@ def test_run_sap_odata_v3(user_dss_clients):
 
 def test_run_sap_odata_v4(user_dss_clients):
     dss_scenario.run(user_dss_clients, project_key=TEST_PROJECT_KEY, scenario_id="ODATA_V4")
+
+
+def test_run_sap_odata_querystring(user_dss_clients):
+    dss_scenario.run(user_dss_clients, project_key=TEST_PROJECT_KEY, scenario_id="ODATA_QUERYSTRING")
