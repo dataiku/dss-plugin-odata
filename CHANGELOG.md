@@ -1,6 +1,6 @@
 # Changelog
 
-## [Version 1.0.3](https://github.com/dataiku/dss-plugin-odata/releases/tag/v1.0.3) - Feature release - 2022-06-21
+## [Version 1.0.3](https://github.com/dataiku/dss-plugin-odata/releases/tag/v1.0.3) - Feature release - 2022-06-28
 
 - Allow user define query strings in resource
 
