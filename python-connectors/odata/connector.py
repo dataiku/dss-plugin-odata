@@ -79,7 +79,7 @@ class ODataConnector(Connector):
                     break
                 if skip + bulk_size > records_limit:
                     bulk_size = records_limit - skip
-            items, next_page_url = self.client.get_entity_collections(self.odata_list_title, top=bulk_size, skip=skip, page_url=next_page_url)
+            items, next_page_url = self.client.get_entity_collections(self.odata_list_title, top=bulk_size, skip=skip, page_url=next_page_url, can_raise=False)
 
     def clean(self, item):
         for key in self.KEYS_TO_REMOVE:
