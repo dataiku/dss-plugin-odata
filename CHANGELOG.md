@@ -1,5 +1,10 @@
 # Changelog
 
+## [Version 1.0.4](https://github.com/dataiku/dss-plugin-odata/releases/tag/v1.0.4) - Fix release - 2023-06-14
+
+- Fix compatibility with some OData v2 servers
+- Fix entity listing for OData v2
+
 ## [Version 1.0.3](https://github.com/dataiku/dss-plugin-odata/releases/tag/v1.0.3) - Feature release - 2022-06-28
 
 - Allow user define query strings in resource

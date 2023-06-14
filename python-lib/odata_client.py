@@ -91,7 +91,7 @@ class ODataClient():
             )
         return session
 
-    def get_entity_collections(self, entity, top=None, skip=None, page_url=None):
+    def get_entity_collections(self, entity, top=None, skip=None, page_url=None, can_raise=True):
         if self.odata_list_title is None or self.odata_list_title == "":
             top = None  # OData will complain if $top is present in a request to list entities
         if self.next_page_key:
@@ -101,15 +101,19 @@ class ODataClient():
         url = page_url if page_url else self.odata_instance + '/' + entity.strip("/")
         data = None
         while self._should_retry(data):
+            logger.info("requests get url {} with params {}".format(url, requests_params))
             response = self.get(url, params=requests_params)
-            self.assert_response(response)
-            data = response.json()
+            if self.assert_response_ok(response, can_raise=can_raise):
+                data = response.json()
+            else:
+                return {}, None
         next_page_url = self.extract_next_page_url(data)
         return self.format(data.get(self.data_container, {})), next_page_url
 
     def extract_next_page_url(self, data):
         next_page_token = data.get(self.next_page_key, None)
         if next_page_token is None:
+            logging.info("No next page token")
             return None
         if self.is_next_page_an_url:
             logging.info("Next page url={}".format(next_page_token))
@@ -204,11 +208,21 @@ class ODataClient():
         else:
             return None
 
-    def assert_response(self, response):
+    def assert_response_ok(self, response, can_raise=True):
         status_code = response.status_code
+        return_code = True
         if status_code == 404:
-            raise DataikuException("This entity does not exist")
+            return_code = False
+            logger.error("Error 404, response={}".format(response.content))
+            if can_raise:
+                raise DataikuException("This entity does not exist")
         if status_code == 403:
             raise DataikuException("{}".format(response))
         if status_code == 401:
             raise DataikuException("Forbidden access")
+        if status_code == 400:
+            return_code = False
+            logger.error("Error 400, response={}".format(response.content))
+            if can_raise:
+                raise DataikuException("Error 400: {}".format(response))
+        return return_code
