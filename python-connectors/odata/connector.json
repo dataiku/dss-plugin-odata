@@ -39,7 +39,7 @@
             "name": "sap-odata_oauth",
             "label": "OData preset",
             "type": "PRESET",
-            "parameterSetId": "azure-sso",
+            "parameterSetId": "oauth-sso",
             "visibilityCondition": "model.auth_type == 'oauth'"
         },
         {
