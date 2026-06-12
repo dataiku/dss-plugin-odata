@@ -1,5 +1,9 @@
 # Changelog
 
+## [Version 1.1.0](https://github.com/dataiku/dss-plugin-odata/releases/tag/v1.1.0) - Feature release - 2026-07-12
+
+- Adding an OAuth SSO preset
+
 ## [Version 1.0.3](https://github.com/dataiku/dss-plugin-odata/releases/tag/v1.0.3) - Feature release - 2022-06-28
 
 - Allow user define query strings in resource
