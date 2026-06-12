@@ -15,7 +15,7 @@
             "name": "auth_type",
             "label": "Type of authentication",
             "type": "SELECT",
-            "visibilityCondition": false,
+            "visibilityCondition": true,
             "defaultValue": "login",
             "selectChoices": [
                 {
@@ -34,6 +34,13 @@
             "type": "PRESET",
             "parameterSetId": "login",
             "visibilityCondition": "model.auth_type == 'login'"
+        },
+        {
+            "name": "sap-odata_oauth",
+            "label": "OData preset",
+            "type": "PRESET",
+            "parameterSetId": "azure-sso",
+            "visibilityCondition": "model.auth_type == 'oauth'"
         },
         {
             "label": "Data to retrieve",
